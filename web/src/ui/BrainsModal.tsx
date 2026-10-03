@@ -8,11 +8,15 @@ type BrainRow = { config: any; stats: any; label: string; healthy: boolean; spee
 
 const BLANK = { id: "", label: "", base_url: "http://127.0.0.1:18090/v1", model: "", api_key: "", max_concurrency: 6, disable_thinking: true, json_mode: true, temperature: 0.7, max_tokens: 600 };
 
+function strList(v: any): string {
+  return Array.isArray(v) ? v.join("+") : (v ?? "");
+}
+
 function thoughtText(l: any): string {
   if (!l.ok) return "";
   if (l.steps) {
     const chain = l.steps.map((s: any) =>
-      s.do + (s.what ? " " + (Array.isArray(s.what) ? s.what.join("+") : s.what) : s.with ? " " + s.with.join("+") : "")).join(" → ");
+      s.do + (s.what ? " " + strList(s.what) : s.with ? " " + strList(s.with) : "")).join(" → ");
     return ": " + chain;
   }
   if (l.chose) {
